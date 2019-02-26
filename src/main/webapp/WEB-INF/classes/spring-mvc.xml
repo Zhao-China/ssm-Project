@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- 设置自动扫描的包 -->
+	<context:component-scan base-package="com.zwl"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- 开启视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+
+	<!-- 配置上传解析器 -->
+	<bean
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		id="multipartResolver">
+		<!-- 设置编码格式 -->
+		<property name="defaultEncoding" value="utf-8"></property>
+		<!-- 设置最大上传大小 -->
+		<property name="maxUploadSize" value="10485760"></property>
+	</bean>
+
+	<!-- springmvc的标准配置 -->
+	<mvc:default-servlet-handler />
+	<mvc:annotation-driven />
+
+	<!--配置过滤器 -->
+	<mvc:interceptors>
+		<bean class="com.zwl.filter.JurisdictInterceptor">
+		</bean>
+	</mvc:interceptors>
+
+	<!-- 直接响应一个页面，不通过过滤器 -->
+
+
+
+
+</beans>

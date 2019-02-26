@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zwl.mapper.EmployeeMapper">
+
+	<!-- 删除员工 -->
+	<delete id="delete" parameterType="int">
+		DELETE FROM `t_employee` WHERE
+		id=#{id}
+	</delete>
+
+	<!-- 添加员工 -->
+	<insert id="addEmp" useGeneratedKeys="true" keyColumn="id"
+		keyProperty="id">
+		INSERT INTO t_employee
+		(last_name,email,gender,birth,department_id) VALUE
+		(#{lastName},#{email},#{gender},#{birth},#{dept.id})
+	</insert>
+
+	<!-- 查询指定范围内的员工 -->
+	<select id="queryPages" resultType="com.zwl.entiy.Employee">
+		SELECT
+		a.id,`last_name`,email,gender,birth,department_id
+		"dept.id",department_name 
+		"dept.departmentName"
+		FROM `t_employee` a
+		LEFT
+		JOIN `t_department` b ON a.`department_id`=b.`id`
+		<where>
+			<if test="emp.lastName != null and emp.lastName!='' ">
+				last_name LIKE CONCAT('%',#{emp.lastName},'%')
+			</if>
+			<if test="emp.email != null and emp.email!='' ">
+				AND email LIKE CONCAT('%',#{emp.email},'%')  
+			</if>
+			<if test="emp.gender != null">
+				AND gender = #{emp.gender}
+			</if>
+			<if test="emp.dept != null and emp.dept.departmentName!=''">
+
+				AND department_name LIKE CONCAT('%',#{emp.dept.departmentName},'%') 
+			</if>
+			<if test="emp.birth!= null">
+				AND birth = #{emp.birth}
+			</if>
+		</where>
+		limit #{map.index},#{map.pageSize}
+	</select>
+
+	<!-- 查询员工总记录数 -->
+	<select id="queryCount" resultType="int"
+		parameterType="com.zwl.entiy.Employee">
+		SELECT COUNT(*) FROM
+		`t_employee` a
+		LEFT JOIN `t_department` b ON
+		a.`department_id`=b.`id`
+		<where>
+			<if test="lastName != null">
+				last_name LIKE CONCAT('%',#{lastName},'%')
+			</if>
+			<if test="email != null">
+				AND email = #{email}
+			</if>
+			<if test="gender != null">
+				AND gender = #{gender}
+			</if>
+			<if test="dept != null">
+				AND department_name = #{dept.departmentName}
+			</if>
+			<if test="birth!= null">
+				AND birth = #{birth}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询所有员工 -->
+	<select id="queryAll" resultType="com.zwl.entiy.Employee">
+		SELECT
+		a.id,`last_name`,email,gender,birth,department_id
+		"dept.id",department_name
+		"dept.departmentName"
+		FROM `t_employee` a
+		LEFT
+		JOIN `t_department` b ON a.`department_id`=b.`id`
+	</select>
+
+	<!-- 查询指定Id的员工信息 -->
+	<select id="queryById" resultType="com.zwl.entiy.Employee">
+		SELECT
+		a.id,`last_name`,email,gender,birth,department_id
+		"dept.id",department_name
+		"dept.departmentName"
+		FROM `t_employee` a
+		LEFT
+		JOIN `t_department` b ON a.`department_id`=b.`id`
+		where a.id=#{id}
+	</select>
+
+	<!-- 更新员工 -->
+	<update id="update">
+		UPDATE t_employee
+		<set>
+			<if test="lastName!=null">last_name=#{lastName},</if>
+			<if test="email!=null">email=#{email},</if>
+			<if test="gender!=null">gender=#{gender},</if>
+			<if test="dept!=null">department_id=#{dept.id},</if>
+			<if test="birth!=null">birth=#{birth}</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+
+</mapper>
